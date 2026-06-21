@@ -1,10 +1,10 @@
 ---
-name: 文档注释生成
-description: 当需要为 Python 代码生成文档字符串、编写 docstring、格式化文档注释、处理 reStructuredText 标签、规范中文文档排版时使用此 Skill。通常与"存根文件编写" Skill 配合使用, 为 .pyi 文件添加符合规范的文档注释。
+name: write-docstring
+description: 当需要为 Python 代码生成文档字符串、编写 docstring、格式化文档注释、处理 reStructuredText 标签、规范中文文档排版时使用此 Skill。通常与 create-pyi Skill 配合使用, 为 .pyi 文件添加符合规范的文档注释。
 version: 1.2.0
 ---
 
-# 文档注释生成 Skill
+# write-docstring Skill
 
 ## 核心任务
 

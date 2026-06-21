@@ -1,10 +1,10 @@
 ---
-name: 存根文件编写
+name: create-pyi
 description: 当用户要求生成 Python .pyi 类型存根文件、编写类型注解文件、生成 .pyi 和 .py 配对文件、编写 Python 模块的类型存根、需要 stub 文件时使用此 Skill。也适用于用户提供 Python 代码要求生成对应的类型存根和精简实现文件。
-version: 1.3.0
+version: 1.3.1
 ---
 
-# 存根文件编写 Skill
+# create-pyi Skill
 
 ## 核心任务
 
@@ -13,7 +13,7 @@ version: 1.3.0
 1. **module.pyi** — 类型存根文件: 完整类型注解、文档字符串、展开的 `@overload` 重载签名
 2. **module.py** — 源文件的轻量变换版本: 移除类型注解和 `@overload` 变体, **保留所有实现代码**
 
-`.pyi` 中文档字符串的**内容**规则参见 **文档注释生成** Skill。
+`.pyi` 中文档字符串的**内容**规则参见 **write-docstring** Skill。
 
 ## 文件结构
 
@@ -51,6 +51,18 @@ project/
 | `@overload` | 保留并展开 | 移除 |
 | `@abstractmethod` | 省略 | 保留 |
 
+### 装饰器顺序
+
+当多个装饰器同时存在时, 遵循 Python 装饰器自底向上应用的规则:
+
+| 组合                                 | 顺序 (从上到下 = 从外到内)                         | 说明                                          |
+|------------------------------------|------------------------------------------|---------------------------------------------|
+| `@property` + `@abstractmethod`    | `@property` 在上 → `@abstractmethod` 在下    | `@abstractmethod` 先应用到函数, `@property` 再包装结果 |
+| `@classmethod` + `@abstractmethod` | `@classmethod` 在上 → `@abstractmethod` 在下 | 同上                                          |
+| `@overload` + `@classmethod`       | `@overload` 在上 → `@classmethod` 在下       | 先注册为类方法, 再标记重载变体                            |
+
+**`@abstractmethod` 始终是 innermost 装饰器 (最靠近 `def`)。**
+
 ---
 
 ## @overload 重载处理
@@ -59,12 +71,12 @@ project/
 
 `@overload` 在 `.pyi` 和 `.py` 之间的处理差异:
 
-| 方面 | .pyi | .py |
-|------|------|-----|
-| `@overload` 变体 | 全部保留并展开 | 全部移除 |
-| 实现签名 | 变体覆盖所有情况时省略, 否则保留 | 保留 (保持源文件原样) |
-| 实现体 | `...` (Ellipsis) | 保留源文件实现 |
-| `overload` 导入 | 添加 `from typing import overload` | 不添加 |
+| 方面             | .pyi                             | .py          |
+|----------------|----------------------------------|--------------|
+| `@overload` 变体 | 全部保留并展开                          | 全部移除         |
+| 实现签名           | 始终保留                             | 保留 (保持源文件原样) |
+| 实现体            | `...` (Ellipsis)                 | 保留源文件实现      |
+| `overload` 导入  | 添加 `from typing import overload` | 不添加          |
 
 ---
 
@@ -202,9 +214,7 @@ def func(x):
 - [ ] 省略 `@abstractmethod` 装饰器
 - [ ] 保留 `@final`, `@property` 等装饰器
 - [ ] `@overload` 重载函数的所有变体均已展开列出
-- [ ] 导入了 `overload` (如有重载函数)
-- [ ] 变体已覆盖所有调用情况时省略了实现签名
-- [ ] 存在未覆盖调用情况时保留了实现签名
+- [ ] 始终保留了实现签名 (防止因误判"变体已覆盖"而遗漏)
 
 ### .py 文件
 - [ ] 不包含任何类型注解

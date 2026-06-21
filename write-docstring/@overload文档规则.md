@@ -1,6 +1,6 @@
 # @overload 文档规则
 
-仅通过 `文档注释生成/SKILL.md` 引用, 不单独使用。
+仅通过 `write-docstring/SKILL.md` 引用, 不单独使用。
 
 ---
 
