@@ -23,3 +23,13 @@
 - 中文排版规范：中英文/中文数字间空格、半角括号
 
 详见 [write-docstring/SKILL.md](./write-docstring/SKILL.md) 及同级 `@overload文档规则.md`。
+
+## commit
+
+分析 Git 已暂存变更并生成 Conventional Commits 格式的提交信息，供复制到 PyCharm Git GUI 中使用。
+
+- 自动检测暂存变更并推断 type、scope
+- 支持代码审查模式（`/commit review`），自动检测不安全代码、调试残留等
+- 审查命中后在源文件插入 `TODO))` 标记并随代码入库
+
+详见 [commit/SKILL.md](./commit/SKILL.md) 及同级 `审查规则.md`。
