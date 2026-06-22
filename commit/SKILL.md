@@ -1,15 +1,55 @@
 ---
 name: commit
 description: 分析 Git 已暂存变更并生成 Conventional Commit 格式的提交信息，供复制到 PyCharm Git GUI 中使用
-version: 1.1.0
+version: 1.2.2
 ---
 
 # 生成 Git 提交信息 Skill
 
 ## 核心任务
 
-分析 Git 已暂存变更（对应 PyCharm Git GUI 中勾选的文件），生成 Conventional Commits 格式的提交信息，输出到终端供用户复制使用。
+分析 Git 已暂存变更（对应 PyCharm Git GUI 中勾选的文件），生成 Conventional Commits 格式的提交信息或执行代码审查。
 **不执行 git commit**。
+
+## 使用方式
+
+| 命令               | 行为          |
+|------------------|-------------|
+| `/commit`        | 生成提交信息（默认）  |
+| `/commit review` | 审查已暂存变更     |
+| `/commit both`   | 审查 + 生成提交信息 |
+| `/commit help`   | 显示使用说明      |
+
+## help 输出
+
+当参数为 `help` 时，直接输出以下内容：
+
+```
+commit 技能 — Git 暂存变更审查与提交信息生成
+
+用法:
+  /commit              生成 Conventional Commit 格式的提交信息
+  /commit review       审查已暂存变更
+  /commit both         先审查，通过后生成提交信息
+  /commit help         显示本帮助
+
+审查流程:
+  1. 机械预检 — Ruff 安全扫描
+  2. AI 审查 — 从逻辑、完整性、架构等维度深度分析
+  3. 询问是否将 TODO 标记写入源文件
+
+依赖文件:
+  - 审查规则.md         审查流程与规则
+  - review_config.yaml  机械预检配置
+  - ruff.toml           Ruff 规则选择
+  - review.py           机械预检执行器
+  - annotate.py         TODO 标记插入工具
+
+环境依赖:
+  - Python 3.10+
+  - PyYAML
+  - Ruff (机械预检)
+```
 
 ## 变更检测规则
 
@@ -90,44 +130,17 @@ version: 1.1.0
 
 ## 代码审查模式
 
-通过附加参数切换模式：
+通过 `/commit review` 和 `/commit both` 触发。审查流程见 `审查规则.md`。
 
-| 命令               | 行为                   |
-|------------------|----------------------|
-| `/commit`        | 生成提交信息（默认）           |
-| `/commit review` | 审查已暂存变更，插入 REVIEW 标记 |
-| `/commit both`   | 审查 + 生成提交信息          |
+## 执行流程
 
-### 审查规则
+每次执行前先输出描述行：
 
-**必须**同时读取本目录下的 **`审查规则.md`**。
-
-使用本目录下的 `review.py` 执行审查：
-
-```bash
-python <skill-dir>/review.py
-```
-
-输出：每行一条 `文件路径:行号:级别: 分类: 描述` 格式的审查结果。
-退出码：存在 error/critical 时返回 1，否则返回 0。
-
-### 标记注释格式
-
-命中后在源文件问题行上方插入：
-
-```python
-< !-- TODO)) [info] @ review
-待办标记: TODO -->
-# TODO)) [级别] @review 分类: 描述
-```
-
-标记**随代码入库**，进入版本控制。修复问题后由开发者手动删除。
-
-### both 模式流程
-
-1. 先执行 `review.py`
-2. 若退出码为 1（存在 error/critical），**中断**，提示用户修复后重试
-3. 若退出码为 0，继续生成提交信息
+| 阶段     | 描述行                               |
+|--------|-----------------------------------|
+| 读取变更   | `==> 读取已暂存变更`                     |
+| 生成提交信息 | `==> 正在生成 Conventional Commit 信息` |
+| 审查模式   | 见审查规则.md 中各阶段描述                   |
 
 ## 输出格式规则
 
@@ -154,3 +167,4 @@ python <skill-dir>/review.py
 - [ ] footer 仅在 Breaking Change 或关联 Issue 时使用
 - [ ] 不执行 git commit，不询问是否提交
 - [ ] 输出信息用分隔线包裹，便于复制
+- [ ] 审查模式走 审查规则.md 定义的两阶段流程

@@ -26,10 +26,21 @@
 
 ## commit
 
-分析 Git 已暂存变更并生成 Conventional Commits 格式的提交信息，供复制到 PyCharm Git GUI 中使用。
+分析 Git 已暂存变更并生成 Conventional Commits 格式的提交信息或执行代码审查。
 
-- 自动检测暂存变更并推断 type、scope
-- 支持代码审查模式（`/commit review`），自动检测不安全代码、调试残留等
-- 审查命中后在源文件插入 `TODO))` 标记并随代码入库
+- 自动检测暂存变更并推断 type、scope，生成标准格式提交信息
+- 支持两阶段代码审查（机械预检 + AI 审查），覆盖安全、逻辑、完整性等维度
+- Ruff 安全规则扫描 + 自定义正则检测，规则由 `review_config.yaml` 配置驱动
+- 审查发现问题后询问用户是否插入 `TODO))` 标记并随代码入库
 
 详见 [commit/SKILL.md](./commit/SKILL.md) 及同级 `审查规则.md`。
+
+## create-skill
+
+创建、重构或拆分 Claude Code Skill 定义。
+
+- 设计 SKILL.md 的结构化元数据（name、description、version）
+- 定义核心任务、使用方式、执行流程、检查清单
+- 支持将现有 Skill 拆分为多个或合并多个 Skill
+
+详见 [create-skill/SKILL.md](./create-skill/SKILL.md)。

@@ -1,0 +1,26 @@
+# 机械预检配置
+# 由 review.py 加载, 控制 Ruff 检查行为
+# Ruff 规则选择见同目录下的 ruff.toml
+
+# ── 扫描范围 ──────────────────────────────────────
+file_types:
+  - ".py"
+
+ignore:
+  - "**/test_*.py"       # 测试文件
+  - "**/*_test.py"
+  - "**/tests/**"
+  - "**/migrations/**"   # 数据库迁移
+  - "**/venv/**"         # 虚拟环境
+  - "**/.venv/**"
+  - "**/.tox/**"
+  - "**/__pycache__/**"
+  - "**/node_modules/**"
+
+# ── Ruff 启动开关 ─────────────────────────────────
+ruff:
+  enabled: true
+
+# ── 严重级别覆盖 ──────────────────────────────────
+severity_overrides:
+  T201: warning   # print 在 CLI 工具中属正常输出, 降为 warning

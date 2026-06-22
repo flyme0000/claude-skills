@@ -1,0 +1,21 @@
+# Ruff 规则配置
+# 被 review.py --config 引用, 用于机械预检的安全扫描
+# 规则来源：bandit (S系列) + flake8-debugger (T系列)
+
+select = [
+    # S1xx — 敏感信息
+    "S105", # 密码/密钥硬编码
+    "S106", # 密码传给子进程
+    "S107", # 函数默认参数含密码
+    # S3xx — 不安全的序列化/执行
+    "S301", # pickle 反序列化
+    "S307", # eval-like 调用 (exec/eval)
+    # S5xx — 不安全的网络/文件操作
+    "S501", # requests verify=False
+    "S506", # yaml.load 缺少 SafeLoader
+    # S6xx — 不安全的子进程
+    "S604", # shell=True
+    # T系列 — 调试残留
+    "T100", # pdb.set_trace / breakpoint
+    "T201", # print 调用
+]
